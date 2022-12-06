@@ -111,6 +111,10 @@ int main(void)
 		//writePWM(&htim3, 100);
 		//HAL_Delay(1000);
     /* USER CODE END WHILE */
+	  main_fsm();
+	  if(isButtonpressed(0)){
+		  mode_switch();
+	  }
 
     /* USER CODE BEGIN 3 */
   }
