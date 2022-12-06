@@ -16,7 +16,7 @@
 
 
 enum BUTTON {BUTTON_1, BUTTON_2, BUTTON_3, P_BUTTON};
-enum BUTTON button;
+//enum BUTTON button;
 
 int isButtonPressed(int index);
 int isButtonPressed1s(int index);

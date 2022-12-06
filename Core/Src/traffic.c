@@ -11,6 +11,7 @@
 
 #include "button.h"
 #include "timer.h"
+#include "traffic.h"
 
 enum TRAFFIC_FSM_MODE {TRAFFIC_FSM_INIT, AUTOMATIC, MANUAL, TUNING};
 enum TRAFFIC_FSM_MODE trafficFsmMode = TRAFFIC_FSM_INIT;
@@ -18,6 +19,13 @@ enum TRAFFIC_FSM_MODE trafficFsmMode = TRAFFIC_FSM_INIT;
 enum TRAFFIC_MODE {TRAFFIC_INIT, RED, GREEN, YELLOW};
 enum TRAFFIC_MODE traffic1Mode = TRAFFIC_INIT;
 enum TRAFFIC_MODE traffic2Mode = TRAFFIC_INIT;
+
+enum TUNING_MODE {TUNE_INIT, TUNE_RED, TUNE_GREEN, TUNE_YELLOW};
+
+int led_red_time = 5;
+int led_green_time = 3;
+int led_yellow_time = 2;
+int tuning_mode = TUNE_INIT;
 
 void traffic_fsm_auto()
 {
@@ -141,6 +149,40 @@ void traffic_fsm_manual()
 		break;
 	}
 	//-------------------------------------------------
+}
+/*
+ * tuning FSM
+ * BUTTON1 to switch mode
+ * BUTTOn2 to switch LED to adjust
+ * BUTTON3 to increase, if > MAX_TIME then rollback to 1
+ * PES_BUTTON to save and switch to auto mode*/
+void tuning_fsm(){
+	switch(tuning_mode){
+		case TUNE_GREEN:
+			if(isButtonPressed(1)) tuning_mode = TUNE_YELLOW;
+			if(isButtonPressed(3)){
+				led_red_time = led_yellow_time + led_green_time;
+				trafficFsmMode = AUTOMATIC;
+				return;
+			}
+			if(isButtonPressed(2)){
+				led_green_time++;
+				if(led_green_time > MAX_TIME) led_green_time = MIN_TIME;
+			}
+			break;
+		case TUNE_YELLOW:
+			if(isButtonPressed(1)) tuning_mode = TUNE_GREEN;
+			if(isButtonPressed(3)){
+				led_red_time = led_yellow_time + led_green_time;
+				trafficFsmMode = AUTOMATIC;
+				return;
+			}
+			if(isButtonPressed(2)){
+				led_yellow_time++;
+				if(led_yellow_time > MAX_TIME) led_green_time = MIN_TIME;
+			}
+			break;
+	}
 }
 
 void main_fsm()

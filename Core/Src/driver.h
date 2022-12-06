@@ -10,8 +10,8 @@
 #include "main.h"
 enum PINOUT {TRAFFIC1_A, TRAFFIC1_B, TRAFFIC2_A, TRAFFIC2_B, PLIGHT_R, PLIGHT_G};
 enum PININ {PBUTTON, BUTTON1, BUTTON2, BUTTON3};
-enum PINOUT pinOutType;
-enum PININ pinInType;
+//enum PINOUT pinOutType;
+//enum PININ pinInType;
 
 void writePin(int index, int value);
 void readPin(int index);
