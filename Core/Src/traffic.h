@@ -12,5 +12,6 @@
 #define MIN_TIME 2
 
 void main_fsm();
+void mode_switch();
 
 #endif /* SRC_TRAFFIC_H_ */

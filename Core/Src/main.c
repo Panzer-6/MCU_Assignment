@@ -112,7 +112,7 @@ int main(void)
 		//HAL_Delay(1000);
     /* USER CODE END WHILE */
 	  main_fsm();
-	  if(isButtonpressed(0)){
+	  if(isButtonPressed(0)){
 		  mode_switch();
 	  }
 

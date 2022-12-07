@@ -154,11 +154,14 @@ void traffic_fsm_manual()
  * tuning FSM
  * BUTTON1 to switch mode
  * BUTTOn2 to switch LED to adjust
- * BUTTON3 to increase, if > MAX_TIME then rollback to 1
+ * BUTTON3 to increase, if time > MAX_TIME then rollback to MIN_TIME
  * PES_BUTTON to save and switch to auto mode
+ * BUTTON(N) -> isButtonPresed(N-1)
  * */
+
 void tuning_fsm(){
 	switch(tuning_mode){
+	//tune the green led
 		case TUNE_GREEN:
 			if(isButtonPressed(1)) tuning_mode = TUNE_YELLOW;
 			if(isButtonPressed(3)){
@@ -171,6 +174,7 @@ void tuning_fsm(){
 				if(led_green_time > MAX_TIME) led_green_time = MIN_TIME;
 			}
 			break;
+		//tune the yellow led
 		case TUNE_YELLOW:
 			if(isButtonPressed(1)) tuning_mode = TUNE_GREEN;
 			if(isButtonPressed(3)){
@@ -192,6 +196,8 @@ void tuning_fsm(){
  */
 void mode_switch(){
 	switch(trafficFsmMode){
+	case TRAFFIC_FSM_INIT:
+		break;
 	case AUTOMATIC:
 		trafficFsmMode = MANUAL;
 		break;
@@ -199,8 +205,8 @@ void mode_switch(){
 		trafficFsmMode = TUNING;
 		break;
 	case TUNING:
-		trafficFsmMode = AUTOMATIC;
 		break;
+	}
 }
 
 void main_fsm()

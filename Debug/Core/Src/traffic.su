@@ -1,4 +1,5 @@
 ../Core/Src/traffic.c:30:6:traffic_fsm_auto	4	static
 ../Core/Src/traffic.c:91:6:traffic_fsm_manual	4	static
-../Core/Src/traffic.c:159:6:tuning_fsm	8	static
-../Core/Src/traffic.c:189:6:main_fsm	8	static
+../Core/Src/traffic.c:162:6:tuning_fsm	8	static
+../Core/Src/traffic.c:197:6:mode_switch	4	static
+../Core/Src/traffic.c:212:6:main_fsm	8	static
