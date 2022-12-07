@@ -102,17 +102,18 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  writePin(TRAFFIC1_A, 0);
-  writePin(TRAFFIC1_B, 0);
+  HAL_GPIO_WritePin(TRAFFIC1_A_GPIO_Port, TRAFFIC1_A_Pin, 0);
+  HAL_GPIO_WritePin(TRAFFIC1_B_GPIO_Port, TRAFFIC1_B_Pin, 1);
   while (1)
   {
-		//togglePin(TRAFFIC1_A);
-		//togglePin(TRAFFIC1_B);
+//	  HAL_GPIO_TogglePin(TRAFFIC1_A_GPIO_Port, TRAFFIC1_A_Pin);
+//	  HAL_GPIO_TogglePin(TRAFFIC1_B_GPIO_Port, TRAFFIC1_B_Pin);
 		//writePWM(&htim3, 100);
-		//HAL_Delay(1000);
+		  main_fsm();
+
     /* USER CODE END WHILE */
-	  main_fsm();
     /* USER CODE BEGIN 3 */
+
   }
   /* USER CODE END 3 */
 }

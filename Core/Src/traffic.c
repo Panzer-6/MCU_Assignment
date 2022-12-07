@@ -12,6 +12,17 @@
 #include "button.h"
 #include "timer.h"
 #include "traffic.h"
+#include "driver.h"
+
+#define ON 1
+#define OFF 0
+
+int ledCode[4][2] = {
+		{OFF, OFF},
+		{ON, OFF},
+		{OFF, ON},
+		{ON, ON}
+};
 
 enum TRAFFIC_FSM_MODE {TRAFFIC_FSM_INIT, AUTOMATIC, MANUAL, TUNING};
 enum TRAFFIC_FSM_MODE trafficFsmMode = TRAFFIC_FSM_INIT;
@@ -21,11 +32,44 @@ enum TRAFFIC_MODE traffic1Mode = TRAFFIC_INIT;
 enum TRAFFIC_MODE traffic2Mode = TRAFFIC_INIT;
 
 enum TUNING_MODE {TUNE_INIT, TUNE_RED, TUNE_GREEN, TUNE_YELLOW};
+enum PEDES_MODE {PEDES}
 
 int led_red_time = 5;
 int led_green_time = 3;
 int led_yellow_time = 2;
 int tuning_mode = TUNE_INIT;
+
+//0 = OFF, 1 = RED, 2 = GREEN, 3 = YELLOW//
+void trafficALedControl(int color){
+	int ledCode[4][2] = {
+			{OFF, OFF},
+			{ON, OFF},
+			{OFF, ON},
+			{ON, ON}
+	};
+	HAL_GPIO_WritePin(TRAFFIC1_A_GPIO_Port, TRAFFIC1_A_Pin,ledCode[color][0]);
+	HAL_GPIO_WritePin(TRAFFIC1_B_GPIO_Port, TRAFFIC1_B_Pin,ledCode[color][1]);
+}
+
+void pedestrian_fsm(TIM_HandleTypeDef* htim3)
+{
+	switch (pedesMode)
+	{
+	case PEDES_RUN:
+		switch (traffic2Mode)
+		{
+		case TRAFFIC_FSM_INIT:
+
+			break
+		case RED:
+			//sáng đèn PLIGHT đỏ
+		case GREEN:
+			//sáng PLIGHT green
+		case YELLOW:
+			//sáng PLIGHT yellow
+		}
+	}
+}
 
 void traffic_fsm_auto()
 {
@@ -35,56 +79,70 @@ void traffic_fsm_auto()
 	case TRAFFIC_INIT:
 		//Initialze necessary variables
 		//TODO
-
+		trafficALedControl(1);
+		traffic1Mode=RED;
+		setTimer(0,led_red_time*1000);
 		break;
 	case RED:
 		//Implement case RED auto
 		//If BUTTON2 is pressed, switch to MANUAL mode
 		//TODO
-
+		if(timer_timeout(0) == 1){
+			trafficALedControl(2);
+			traffic1Mode=GREEN;
+			setTimer(0,led_green_time*1000);
+		}
 		break;
 	case YELLOW:
 		//Implement case YELLOW auto
 		//If BUTTON2 is pressed, switch to MANUAL mode
 		//TODO
-
+		if(timer_timeout(0) == 1){
+			trafficALedControl(1);
+			traffic1Mode=RED;
+			setTimer(0,led_red_time*1000);
+		}
 		break;
 	case GREEN:
 		//Implement case GREEN auto
 		//If BUTTON2 is pressed, switch to MANUAL mode
-
+		if(timer_timeout(0) == 1){
+			trafficALedControl(3);
+			traffic1Mode=YELLOW;
+			setTimer(0,led_yellow_time*1000);
+		}
 		break;
 	default:
 		break;
 	}
 	//-------------------------------------------------
-	switch (traffic2Mode)
-	{
-	case TRAFFIC_INIT:
-		//Initialze necessary variables
-		//TODO
-
-		break;
-	case RED:
-		//Implement case RED auto
-		//If BUTTON2 is pressed, switch to MANUAL mode
-		//TODO
-
-		break;
-	case YELLOW:
-		//Implement case YELLOW auto
-		//If BUTTON2 is pressed, switch to MANUAL mode
-		//TODO
-
-		break;
-	case GREEN:
-		//Implement case GREEN auto
-		//If BUTTON2 is pressed, switch to MANUAL mode
-
-		break;
-	default:
-		break;
-	}
+//	switch (traffic2Mode)
+//	{
+//	case TRAFFIC_INIT:
+//		//Initialze necessary variables
+//		//TODO
+//
+//		break;
+//	case RED:
+//		//Implement case RED auto
+//		//If BUTTON2 is pressed, switch to MANUAL mode
+//		//TODO
+//
+//		break;
+//	case YELLOW:
+//		//Implement case YELLOW auto
+//		//If BUTTON2 is pressed, switch to MANUAL mode
+//		//TODO
+//
+//		break;
+//	case GREEN:
+//		//Implement case GREEN auto
+//		//If BUTTON2 is pressed, switch to MANUAL mode
+//
+//		break;
+//	default:
+//		break;
+//	}
 	//-------------------------------------------------
 }
 
@@ -202,7 +260,7 @@ void main_fsm()
 	case TRAFFIC_FSM_INIT:
 		//Initialize necessary variables
 		//TODO
-
+		trafficFsmMode = AUTOMATIC;
 		break;
 	case AUTOMATIC:
 		//Default mode
@@ -224,7 +282,7 @@ void main_fsm()
 		//BUTTON3 will increase the duration by 1 per press, by 10 per long press
 		//Implement TUNING mode
 		//TODO
-
+		tunning_fsm();
 		break;
 	default:
 		break;
