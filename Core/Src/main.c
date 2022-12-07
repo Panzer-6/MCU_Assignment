@@ -102,16 +102,18 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  writePin(TRAFFIC1_A, 0);
-  writePin(TRAFFIC1_B, 0);
+  writePin(TRAFFIC2_A, 0);
+  writePin(TRAFFIC2_B, 0);
   while (1)
   {
-		//togglePin(TRAFFIC1_A);
-		//togglePin(TRAFFIC1_B);
-		//writePWM(&htim3, 100);
-		//HAL_Delay(1000);
+		HAL_Delay(5000);
+		//togglePin(TRAFFIC2_A);
+		//togglePin(TRAFFIC2_B);
+		writePWM(&htim3, 0);
+
+	  //main_fsm(&htim3);
     /* USER CODE END WHILE */
-	  main_fsm();
+	  //main_fsm(&htim3);
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */

@@ -12,6 +12,7 @@
 #include "button.h"
 #include "timer.h"
 #include "traffic.h"
+#include "driver.h"
 
 enum TRAFFIC_FSM_MODE {TRAFFIC_FSM_INIT, AUTOMATIC, MANUAL, TUNING};
 enum TRAFFIC_FSM_MODE trafficFsmMode = TRAFFIC_FSM_INIT;
@@ -21,6 +22,9 @@ enum TRAFFIC_MODE traffic1Mode = TRAFFIC_INIT;
 enum TRAFFIC_MODE traffic2Mode = TRAFFIC_INIT;
 
 enum TUNING_MODE {TUNE_INIT, TUNE_RED, TUNE_GREEN, TUNE_YELLOW};
+
+enum PEDES_MODE {PEDES_RUN, PEDES_STOP};
+enum PEDES_MODE pedesMode = PEDES_STOP;
 
 int led_red_time = 5;
 int led_green_time = 3;
@@ -33,26 +37,48 @@ void traffic_fsm_auto()
 	switch (traffic1Mode)
 	{
 	case TRAFFIC_INIT:
-		//Initialze necessary variables
-		//TODO
-
-		break;
+			//Initialze necessary variables
+			//TODO
+			setTimer(TRAFFIC1_TIMER, 3000);
+			traffic1Mode = GREEN;
+			writePin(TRAFFIC1_A, 0);
+			writePin(TRAFFIC1_B, 1);
+			break;
 	case RED:
-		//Implement case RED auto
-		//If BUTTON2 is pressed, switch to MANUAL mode
+		//Implement case RED manual
+		//If timeout, switch to AUTO mode
 		//TODO
-
+		if (timer_timeout(TRAFFIC1_TIMER))
+		{
+			setTimer(TRAFFIC1_TIMER, 3000);
+			traffic1Mode = GREEN;
+			writePin(TRAFFIC1_A, 0);
+			writePin(TRAFFIC1_B, 1);
+		}
 		break;
 	case YELLOW:
-		//Implement case YELLOW auto
-		//If BUTTON2 is pressed, switch to MANUAL mode
+		//Implement case YELLOW manual
+		//If timeout, switch to AUTO mode
 		//TODO
-
+		if (timer_timeout(TRAFFIC1_TIMER))
+		{
+			setTimer(TRAFFIC1_TIMER, 5000);
+			traffic1Mode = RED;
+			writePin(TRAFFIC1_A, 1);
+			writePin(TRAFFIC1_B, 0);
+		}
 		break;
 	case GREEN:
-		//Implement case GREEN auto
-		//If BUTTON2 is pressed, switch to MANUAL mode
-
+		//Implement case GREEN manual
+		//If timeout, switch to AUTO mode
+		//TODO
+		if (timer_timeout(TRAFFIC1_TIMER))
+		{
+			setTimer(TRAFFIC1_TIMER, 2000);
+			traffic1Mode = YELLOW;
+			writePin(TRAFFIC1_A, 1);
+			writePin(TRAFFIC1_B, 1);
+		}
 		break;
 	default:
 		break;
@@ -63,24 +89,46 @@ void traffic_fsm_auto()
 	case TRAFFIC_INIT:
 		//Initialze necessary variables
 		//TODO
-
+		setTimer(TRAFFIC2_TIMER, 5000);
+		traffic2Mode = RED;
+		writePin(TRAFFIC2_A, 1);
+		writePin(TRAFFIC2_B, 0);
 		break;
 	case RED:
-		//Implement case RED auto
-		//If BUTTON2 is pressed, switch to MANUAL mode
+		//Implement case RED manual
+		//If timeout, switch to AUTO mode
 		//TODO
-
+		if (timer_timeout(TRAFFIC2_TIMER))
+		{
+			setTimer(TRAFFIC2_TIMER, 3000);
+			traffic2Mode = GREEN;
+			writePin(TRAFFIC2_A, 0);
+			writePin(TRAFFIC2_B, 1);
+		}
 		break;
 	case YELLOW:
-		//Implement case YELLOW auto
-		//If BUTTON2 is pressed, switch to MANUAL mode
+		//Implement case YELLOW manual
+		//If timeout, switch to AUTO mode
 		//TODO
-
+		if (timer_timeout(TRAFFIC2_TIMER))
+		{
+			setTimer(TRAFFIC2_TIMER, 5000);
+			traffic2Mode = RED;
+			writePin(TRAFFIC2_A, 1);
+			writePin(TRAFFIC2_B, 0);
+		}
 		break;
 	case GREEN:
-		//Implement case GREEN auto
-		//If BUTTON2 is pressed, switch to MANUAL mode
-
+		//Implement case GREEN manual
+		//If timeout, switch to AUTO mode
+		//TODO
+		if (timer_timeout(TRAFFIC2_TIMER))
+		{
+			setTimer(TRAFFIC2_TIMER, 2000);
+			traffic2Mode = YELLOW;
+			writePin(TRAFFIC2_A, 1);
+			writePin(TRAFFIC2_B, 1);
+		}
 		break;
 	default:
 		break;
@@ -190,25 +238,90 @@ void tuning_fsm(){
 			break;
 	}
 }
+
+void pedestrian_fsm(TIM_HandleTypeDef* htim3)
+{
+	switch (pedesMode)
+	{
+	case PEDES_RUN:
+		switch (traffic2Mode)
+		{
+		case TRAFFIC_INIT:
+			break;
+		case RED:
+			if (isButtonPressed(P_BUTTON))
+			{
+				pedesMode = PEDES_STOP;
+			}
+			else
+			{
+				writePin(PLIGHT_R, 1);
+				writePin(PLIGHT_G, 0);
+				writePWM(htim3, 0);
+			}
+			break;
+		case GREEN:
+			if (isButtonPressed(P_BUTTON))
+			{
+				pedesMode = PEDES_STOP;
+			}
+			else
+			{
+				writePin(PLIGHT_R, 1);
+				writePin(PLIGHT_G, 1);
+				writePWM(htim3, 0);
+			}
+			break;
+		case YELLOW:
+			if (isButtonPressed(P_BUTTON))
+			{
+				pedesMode = PEDES_STOP;
+			}
+			else
+			{
+				writePin(PLIGHT_R, 1);
+				writePin(PLIGHT_G, 1);
+				writePWM(htim3, 10);
+			}
+			break;
+		default:
+			break;
+		}
+		break;
+	case PEDES_STOP:
+		if (isButtonPressed(PBUTTON))
+		{
+			pedesMode = PEDES_RUN;
+		}
+		else
+		{
+			writePin(PLIGHT_R, 0);
+			writePin(PLIGHT_G, 0);
+			writePWM(htim3, 0);
+		}
+		break;
+	}
+}
 /*
  * Mode switch function
  * switch to appopriate function
  */
 
-void main_fsm()
+void main_fsm(TIM_HandleTypeDef* htim3)
 {
 	switch (trafficFsmMode)
 	{
 	case TRAFFIC_FSM_INIT:
 		//Initialize necessary variables
 		//TODO
-
+		trafficFsmMode = AUTOMATIC;
 		break;
 	case AUTOMATIC:
 		//Default mode
 		//Typical auto traffic light
 		//Implement the function below
 		//TODO
+		pedestrian_fsm(htim3);
 		traffic_fsm_auto();
 		break;
 	case MANUAL:

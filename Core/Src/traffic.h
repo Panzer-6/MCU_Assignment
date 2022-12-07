@@ -11,7 +11,9 @@
 #define MAX_TIME 50
 #define MIN_TIME 2
 
-void main_fsm();
+void pedestrian_fsm(TIM_HandleTypeDef* htim3);
+void traffic_fsm_auto();
+void main_fsm(TIM_HandleTypeDef* htim3);
 void mode_switch();
 
 #endif /* SRC_TRAFFIC_H_ */
