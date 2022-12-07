@@ -194,20 +194,6 @@ void tuning_fsm(){
  * Mode switch function
  * switch to appopriate function
  */
-void mode_switch(){
-	switch(trafficFsmMode){
-	case TRAFFIC_FSM_INIT:
-		break;
-	case AUTOMATIC:
-		trafficFsmMode = MANUAL;
-		break;
-	case MANUAL:
-		trafficFsmMode = TUNING;
-		break;
-	case TUNING:
-		break;
-	}
-}
 
 void main_fsm()
 {

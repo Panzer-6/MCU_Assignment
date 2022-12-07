@@ -112,10 +112,6 @@ int main(void)
 		//HAL_Delay(1000);
     /* USER CODE END WHILE */
 	  main_fsm();
-	  if(isButtonPressed(0)){
-		  mode_switch();
-	  }
-
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
