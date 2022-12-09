@@ -102,18 +102,23 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  writePin(TRAFFIC2_A, 0);
-  writePin(TRAFFIC2_B, 0);
+  HAL_GPIO_WritePin(TRAFFIC1_A_GPIO_Port, TRAFFIC1_A_Pin, 1);
+  HAL_GPIO_WritePin(TRAFFIC1_B_GPIO_Port, TRAFFIC1_B_Pin, 1);
+  setTimer(0,10);
   while (1)
   {
-		HAL_Delay(5000);
-		//togglePin(TRAFFIC2_A);
+	  	  main_fsm(&htim3);
+	  	  //togglePin(TRAFFIC2_A);
 		//togglePin(TRAFFIC2_B);
-		writePWM(&htim3, 0);
-
+		//writePWM(&htim3, 0);
+//	  if(timer_timeout(0) == 1){
+//		  HAL_GPIO_TogglePin(TRAFFIC2_A_GPIO_Port, TRAFFIC2_A_Pin);
+//		  HAL_GPIO_TogglePin(TRAFFIC2_B_GPIO_Port, TRAFFIC2_B_Pin);
+//		  setTimer(0, 20000);
+//	  }
 	  //main_fsm(&htim3);
     /* USER CODE END WHILE */
-	  //main_fsm(&htim3);
+
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
