@@ -102,6 +102,7 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+<<<<<<< HEAD
   HAL_GPIO_WritePin(TRAFFIC1_A_GPIO_Port, TRAFFIC1_A_Pin, 0);
   HAL_GPIO_WritePin(TRAFFIC1_B_GPIO_Port, TRAFFIC1_B_Pin, 1);
   while (1)
@@ -112,6 +113,25 @@ int main(void)
 		  main_fsm();
 
     /* USER CODE END WHILE */
+=======
+  HAL_GPIO_WritePin(TRAFFIC1_A_GPIO_Port, TRAFFIC1_A_Pin, 1);
+  HAL_GPIO_WritePin(TRAFFIC1_B_GPIO_Port, TRAFFIC1_B_Pin, 1);
+  setTimer(0,10);
+  while (1)
+  {
+	  	  main_fsm(&htim3);
+	  	  //togglePin(TRAFFIC2_A);
+		//togglePin(TRAFFIC2_B);
+		//writePWM(&htim3, 0);
+//	  if(timer_timeout(0) == 1){
+//		  HAL_GPIO_TogglePin(TRAFFIC2_A_GPIO_Port, TRAFFIC2_A_Pin);
+//		  HAL_GPIO_TogglePin(TRAFFIC2_B_GPIO_Port, TRAFFIC2_B_Pin);
+//		  setTimer(0, 20000);
+//	  }
+	  //main_fsm(&htim3);
+    /* USER CODE END WHILE */
+
+>>>>>>> Pedestrian
     /* USER CODE BEGIN 3 */
 
   }

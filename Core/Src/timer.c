@@ -7,7 +7,7 @@
 #define NUM_OF_TIMER 4
 int timer_duration[NUM_OF_TIMER] = {0, 0, 0, 0};
 int timer_flag[NUM_OF_TIMER] = {0, 0, 0, 0};
-#define TIMER_TICK 10;
+#define TIMER_TICK 10
 #define FLAG_ON 	1
 #define FLAG_OFF 	0
 

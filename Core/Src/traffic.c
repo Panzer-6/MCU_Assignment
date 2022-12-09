@@ -13,6 +13,7 @@
 #include "timer.h"
 #include "traffic.h"
 #include "driver.h"
+<<<<<<< HEAD
 
 #define ON 1
 #define OFF 0
@@ -23,6 +24,8 @@ int ledCode[4][2] = {
 		{OFF, ON},
 		{ON, ON}
 };
+=======
+>>>>>>> Pedestrian
 
 enum TRAFFIC_FSM_MODE {TRAFFIC_FSM_INIT, AUTOMATIC, MANUAL, TUNING};
 enum TRAFFIC_FSM_MODE trafficFsmMode = TRAFFIC_FSM_INIT;
@@ -33,6 +36,9 @@ enum TRAFFIC_MODE traffic2Mode = TRAFFIC_INIT;
 
 enum TUNING_MODE {TUNE_INIT, TUNE_RED, TUNE_GREEN, TUNE_YELLOW};
 enum PEDES_MODE {PEDES}
+
+enum PEDES_MODE {PEDES_RUN, PEDES_STOP};
+enum PEDES_MODE pedesMode = PEDES_STOP;
 
 int led_red_time = 5;
 int led_green_time = 3;
@@ -77,26 +83,46 @@ void traffic_fsm_auto()
 	switch (traffic1Mode)
 	{
 	case TRAFFIC_INIT:
+<<<<<<< HEAD
 		//Initialze necessary variables
 		//TODO
 		trafficALedControl(1);
 		traffic1Mode=RED;
 		setTimer(0,led_red_time*1000);
 		break;
+=======
+			//Initialze necessary variables
+			//TODO
+			setTimer(TRAFFIC1_TIMER, 1000*led_green_time);
+			traffic1Mode = GREEN;
+			writePin(TRAFFIC1A, 0);
+			writePin(TRAFFIC1B, 1);
+			break;
+>>>>>>> Pedestrian
 	case RED:
-		//Implement case RED auto
-		//If BUTTON2 is pressed, switch to MANUAL mode
+		//Implement case RED manual
+		//If timeout, switch to AUTO mode
 		//TODO
+<<<<<<< HEAD
 		if(timer_timeout(0) == 1){
 			trafficALedControl(2);
 			traffic1Mode=GREEN;
 			setTimer(0,led_green_time*1000);
+=======
+		if (timer_timeout(TRAFFIC1_TIMER))
+		{
+			setTimer(TRAFFIC1_TIMER, 10000*led_green_time);
+			traffic1Mode = GREEN;
+			writePin(TRAFFIC1A, 0);
+			writePin(TRAFFIC1B, 1);
+>>>>>>> Pedestrian
 		}
 		break;
 	case YELLOW:
-		//Implement case YELLOW auto
-		//If BUTTON2 is pressed, switch to MANUAL mode
+		//Implement case YELLOW manual
+		//If timeout, switch to AUTO mode
 		//TODO
+<<<<<<< HEAD
 		if(timer_timeout(0) == 1){
 			trafficALedControl(1);
 			traffic1Mode=RED;
@@ -110,12 +136,33 @@ void traffic_fsm_auto()
 			trafficALedControl(3);
 			traffic1Mode=YELLOW;
 			setTimer(0,led_yellow_time*1000);
+=======
+		if (timer_timeout(TRAFFIC1_TIMER))
+		{
+			setTimer(TRAFFIC1_TIMER, 10000*led_red_time);
+			traffic1Mode = RED;
+			writePin(TRAFFIC1A, 1);
+			writePin(TRAFFIC1B, 0);
+		}
+		break;
+	case GREEN:
+		//Implement case GREEN manual
+		//If timeout, switch to AUTO mode
+		//TODO
+		if (timer_timeout(TRAFFIC1_TIMER))
+		{
+			setTimer(TRAFFIC1_TIMER, 10000*led_yellow_time);
+			traffic1Mode = YELLOW;
+			writePin(TRAFFIC1A, 1);
+			writePin(TRAFFIC1B, 1);
+>>>>>>> Pedestrian
 		}
 		break;
 	default:
 		break;
 	}
 	//-------------------------------------------------
+<<<<<<< HEAD
 //	switch (traffic2Mode)
 //	{
 //	case TRAFFIC_INIT:
@@ -143,6 +190,57 @@ void traffic_fsm_auto()
 //	default:
 //		break;
 //	}
+=======
+	switch (traffic2Mode)
+	{
+	case TRAFFIC_INIT:
+		//Initialze necessary variables
+		//TODO
+		setTimer(TRAFFIC2_TIMER, 50000);
+		traffic2Mode = RED;
+		writePin(TRAFFIC2A, 1);
+		writePin(TRAFFIC2B, 0);
+		break;
+	case RED:
+		//Implement case RED manual
+		//If timeout, switch to AUTO mode
+		//TODO
+		if (timer_timeout(TRAFFIC2_TIMER))
+		{
+			setTimer(TRAFFIC2_TIMER, 30000);
+			traffic2Mode = GREEN;
+			writePin(TRAFFIC2A, 0);
+			writePin(TRAFFIC2B, 1);
+		}
+		break;
+	case YELLOW:
+		//Implement case YELLOW manual
+		//If timeout, switch to AUTO mode
+		//TODO
+		if (timer_timeout(TRAFFIC2_TIMER))
+		{
+			setTimer(TRAFFIC2_TIMER, 50000);
+			traffic2Mode = RED;
+			writePin(TRAFFIC2A, 1);
+			writePin(TRAFFIC2B, 0);
+		}
+		break;
+	case GREEN:
+		//Implement case GREEN manual
+		//If timeout, switch to AUTO mode
+		//TODO
+		if (timer_timeout(TRAFFIC2_TIMER))
+		{
+			setTimer(TRAFFIC2_TIMER, 20000);
+			traffic2Mode = YELLOW;
+			writePin(TRAFFIC2A, 1);
+			writePin(TRAFFIC2B, 1);
+		}
+		break;
+	default:
+		break;
+	}
+>>>>>>> Pedestrian
 	//-------------------------------------------------
 }
 
@@ -221,31 +319,95 @@ void tuning_fsm(){
 	switch(tuning_mode){
 	//tune the green led
 		case TUNE_GREEN:
-			if(isButtonPressed(1)) tuning_mode = TUNE_YELLOW;
-			if(isButtonPressed(3)){
+			if(isButtonPressed(BUTTON2)) tuning_mode = TUNE_YELLOW;
+			if(isButtonPressed(PBUTTON)){
 				led_red_time = led_yellow_time + led_green_time;
 				trafficFsmMode = AUTOMATIC;
 				return;
 			}
-			if(isButtonPressed(2)){
+			if(isButtonPressed(BUTTON3)){
 				led_green_time++;
 				if(led_green_time > MAX_TIME) led_green_time = MIN_TIME;
 			}
 			break;
 		//tune the yellow led
 		case TUNE_YELLOW:
-			if(isButtonPressed(1)) tuning_mode = TUNE_GREEN;
-			if(isButtonPressed(3)){
+			if(isButtonPressed(BUTTON2)) tuning_mode = TUNE_GREEN;
+			if(isButtonPressed(PBUTTON)){
 				tuning_mode = TUNE_GREEN;
 				led_red_time = led_yellow_time + led_green_time;
 				trafficFsmMode = AUTOMATIC;
 				return;
 			}
-			if(isButtonPressed(2)){
+			if(isButtonPressed(BUTTON3)){
 				led_yellow_time++;
 				if(led_yellow_time > MAX_TIME) led_green_time = MIN_TIME;
 			}
 			break;
+	}
+}
+
+void pedestrian_fsm(TIM_HandleTypeDef* htim3)
+{
+	switch (pedesMode)
+	{
+	case PEDES_RUN:
+		switch (traffic2Mode)
+		{
+		case TRAFFIC_INIT:
+			break;
+		case RED:
+			if (isButtonPressed(P_BUTTON))
+			{
+				pedesMode = PEDES_STOP;
+			}
+			else
+			{
+				writePin(PLIGHTR, 1);
+				writePin(PLIGHTG, 0);
+				writePWM(htim3, 0);
+			}
+			break;
+		case GREEN:
+			if (isButtonPressed(P_BUTTON))
+			{
+				pedesMode = PEDES_STOP;
+			}
+			else
+			{
+				writePin(PLIGHTR, 0);
+				writePin(PLIGHTG, 1);
+				writePWM(htim3, 0);
+			}
+			break;
+		case YELLOW:
+			if (isButtonPressed(P_BUTTON))
+			{
+				pedesMode = PEDES_STOP;
+			}
+			else
+			{
+				writePin(PLIGHTR, 1);
+				writePin(PLIGHTG, 1);
+				writePWM(htim3, 10);
+			}
+			break;
+		default:
+			break;
+		}
+		break;
+	case PEDES_STOP:
+		if (isButtonPressed(P_BUTTON))
+		{
+			pedesMode = PEDES_RUN;
+		}
+		else
+		{
+			writePin(PLIGHTR, 0);
+			writePin(PLIGHTG, 0);
+			writePWM(htim3, 0);
+		}
+		break;
 	}
 }
 /*
@@ -253,7 +415,7 @@ void tuning_fsm(){
  * switch to appopriate function
  */
 
-void main_fsm()
+void main_fsm(TIM_HandleTypeDef* htim3)
 {
 	switch (trafficFsmMode)
 	{
@@ -267,6 +429,7 @@ void main_fsm()
 		//Typical auto traffic light
 		//Implement the function below
 		//TODO
+		pedestrian_fsm(htim3);
 		traffic_fsm_auto();
 		break;
 	case MANUAL:
@@ -282,7 +445,11 @@ void main_fsm()
 		//BUTTON3 will increase the duration by 1 per press, by 10 per long press
 		//Implement TUNING mode
 		//TODO
+<<<<<<< HEAD
 		tunning_fsm();
+=======
+		tuning_fsm();
+>>>>>>> Pedestrian
 		break;
 	default:
 		break;
