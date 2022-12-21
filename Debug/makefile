@@ -52,6 +52,12 @@ default.size.stdout \
 OBJDUMP_LIST += \
 Asignment_backup.list \
 
+OBJCOPY_HEX += \
+Asignment_backup.hex \
+
+OBJCOPY_BIN += \
+Asignment_backup.bin \
+
 
 # All Target
 all: main-build
@@ -75,12 +81,22 @@ Asignment_backup.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS
 	@echo 'Finished building: $@'
 	@echo ' '
 
+Asignment_backup.hex: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-objcopy  -O ihex $(EXECUTABLES) "Asignment_backup.hex"
+	@echo 'Finished building: $@'
+	@echo ' '
+
+Asignment_backup.bin: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-objcopy  -O binary $(EXECUTABLES) "Asignment_backup.bin"
+	@echo 'Finished building: $@'
+	@echo ' '
+
 # Other Targets
 clean:
-	-$(RM) Asignment_backup.elf Asignment_backup.list Asignment_backup.map default.size.stdout
+	-$(RM) Asignment_backup.bin Asignment_backup.elf Asignment_backup.hex Asignment_backup.list Asignment_backup.map default.size.stdout
 	-@echo ' '
 
-secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST)
+secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST) $(OBJCOPY_HEX) $(OBJCOPY_BIN)
 
 fail-specified-linker-script-missing:
 	@echo 'Error: Cannot find the specified linker script. Check the linker settings in the build configuration.'
